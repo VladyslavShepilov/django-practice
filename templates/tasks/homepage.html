@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="d-flex justify-content-between">
+    <h1>TODO list</h1>
+    <a class="btn btn-primary" href="{% url 'tasks:task-create' %}">Add task</a>
+  </div>
+<br>
+<br>
+<br>
+  {% if tasks %}
+    {% for task in tasks %}
+      <ul>
+        <li>
+          <div class="d-flex justify-content-between">
+            <span class="text-bold">{{ task.content }}
+              {% if task.done %}
+                <span class="text-green">Done</span>
+              {% else %}
+                <span class="text-red">Not done</span>
+              {% endif %}
+            </span>
+            {% if task.done %}
+              <form action="" method="post" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="task_id" value="{{ task.id }}">
+                <input type="submit" name="toggle_status" class="btn btn-danger" value="Undo">
+              </form>
+            {% else %}
+              <form action="" method="post" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="task_id" value="{{ task.id }}">
+                <input type="submit" name="toggle_status" class="btn btn-success" value="Complete">
+              </form>
+            {% endif %}
+          </div>
+        </li>
+        <li>
+          {% if task.deadline %}
+            {{ task.deadline }}
+          {% endif %}
+        </li>
+        <li>
+          Tags:
+          {% if task.tags %}
+            {% for tag in task.tags.all %}
+              {{ tag }}
+            {% endfor %}
+          <a href="{% url 'tasks:task-update' pk=task.pk %}">Update</a>
+          <a href="{% url 'tasks:task-delete' pk=task.pk%}">Delete</a>
+          {% else %}
+          No tags
+          {% endif %}
+        </li>
+      </ul>
+    {% endfor %}
+  {% else %}
+    <span>No tasks yet</span>
+  {% endif %}
+{% endblock %}
