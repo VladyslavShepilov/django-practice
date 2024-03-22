@@ -15,11 +15,9 @@ class TaskListView(generic.ListView):
         return Task.objects.prefetch_related("tags")
 
     def post(self, request, *args, **kwargs):
-        if "toggle_status" in self.request.POST:
-            task_id = request.POST.get("task_id")
-            task = Task.objects.get(pk=task_id)
-            task.done = not task.done
-            task.save()
+        task = Task.objects.get(pk=request.POST.get("task_id"))
+        task.done = not task.done
+        task.save()
         return self.get(request, *args, **kwargs)
 
 
@@ -52,7 +50,7 @@ class TagListView(generic.ListView):
 
 class TagCreateView(generic.CreateView):
     model = Tag
-    template_name = "tasks/tag_list.html"
+    template_name = "tasks/tag_form.html"
     fields = "__all__"
     success_url = reverse_lazy("tasks:tag-list")
 
